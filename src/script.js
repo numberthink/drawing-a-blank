@@ -1,11 +1,14 @@
 
 
 // draw "blank" (or white) canvas
-const canvas = document.getElementById("blankCanvas");
-const ctx = canvas.getContext("2d");
+const blankCanvas = document.getElementById("blankCanvas");
+const ctxBg = blankCanvas.getContext("2d");
+const drawCanvas = document.getElementById('drawCanvas');
+const ctx = drawCanvas.getContext("2d");
+let canvasColor = '#ffffff'
 const drawBlank = () => {
-    ctx.fillStyle = "blue";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctxBg.fillStyle = canvasColor;
+    ctxBg.fillRect(0, 0, blankCanvas.width, blankCanvas.height);
 }
 
 drawBlank();
@@ -21,6 +24,21 @@ const showAboutButton = document.getElementById('showAboutThisSite');
 const aboutThisSite = document.getElementById('aboutThisSite');
 const aboutText = document.getElementById('about');
 const clearCanvasButton  = document.getElementById('clearCanvasButton');
+const backgroundColorPicker = document.getElementById('backgroundColorPicker');
+const markerColorPicker = document.getElementById('markerColorPicker');
+const closeAboutButton = document.getElementById('closeAboutButton');
+backgroundColorPicker.value = canvasColor;
+
+const showAboutThisSite = () => {
+    aboutVisible = true;
+    aboutThisSite.style.visibility = 'visible';
+}
+
+const hideAboutThisSite = () => {
+    aboutVisible = false;
+    aboutThisSite.style.visibility = 'hidden';
+}
+
 showAboutButton.addEventListener('click', () => {
     if (!aboutVisible) {
         showAboutThisSite();
@@ -30,23 +48,55 @@ showAboutButton.addEventListener('click', () => {
     }
 });
 
-aboutText.innerHTML = `
-<p>This is a blank canvas that I drew.</p>
-<p>Feel free to leave it blank, or use your mouse or touch to draw on it.</p>
-<p>You can clear the canvas or change the background color using the controls below.</p>
-`;
-
-clearCanvasButton.addEventListener('click',(event) => {
-    if (!aboutThisSite.contains(event.target)) {
-        drawBlank();
-    }
+closeAboutButton.addEventListener('click', () => {
+    hideAboutThisSite();
+    
 });
 
+window.addEventListener('keydown', (event)=> {
+    if (event.key=='Escape' && aboutVisible) {
+        hideAboutThisSite();
+    }
+})
+
+aboutText.innerHTML = `
+<p>This is a blank canvas.</p>
+<p>Feel free to leave it blank, or use your mouse or touch to draw on it.</p>
+<p>You can clear the canvas, change the background color, or change the marker color using the controls below.</p>
+`;
+
+const clearCanvas = () => {
+    ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height)
+}
+
+clearCanvasButton.addEventListener('click',(event) => {
+    clearCanvas();
+    drawBlank();
+});
+
+
+backgroundColorPicker.oninput = function() {
+    canvasColor = backgroundColorPicker.value;
+    drawBlank();
+}
+
+
+// draw on the canvas
+
+let drawColor = '#3ee059';
+markerColorPicker.value = drawColor;
+markerColorPicker.oninput = function() {
+    drawColor = markerColorPicker.value;
+}
+
 document.body.addEventListener('mousedown',(event)=> {
+    if (aboutThisSite.contains(event.target) || showAboutButton.contains(event.target)) {
+        return;
+    }
     clicking = true;
-    const bb = canvas.getBoundingClientRect();
-    const x = Math.floor( (event.clientX - bb.left) / bb.width * canvas.width );
-    const y = Math.floor( (event.clientY - bb.top) / bb.height * canvas.height );
+    const bb = blankCanvas.getBoundingClientRect();
+    const x = Math.floor( (event.clientX - bb.left) / bb.width * blankCanvas.width );
+    const y = Math.floor( (event.clientY - bb.top) / bb.height * blankCanvas.height );
     mouseCoordinates.x = x;
     mouseCoordinates.y = y;
     drawAtMouse();
@@ -58,35 +108,47 @@ document.body.addEventListener('mouseup',()=> {
 
 document.body.addEventListener('mousemove',(event)=> {
     if (clicking) {
-        const bb = canvas.getBoundingClientRect();
-        const x = Math.floor( (event.clientX - bb.left) / bb.width * canvas.width );
-        const y = Math.floor( (event.clientY - bb.top) / bb.height * canvas.height );
+        const prevCoordinates = structuredClone(mouseCoordinates);
+        const bb = blankCanvas.getBoundingClientRect();
+        const x = Math.floor( (event.clientX - bb.left) / bb.width * blankCanvas.width );
+        const y = Math.floor( (event.clientY - bb.top) / bb.height * blankCanvas.height );
         mouseCoordinates.x = x;
         mouseCoordinates.y = y;
-        drawAtMouse();
+
+        drawAtMouse(prevCoordinates);
     }
 });
 
-const drawAtMouse = () => {
+const drawAtMouse = (prevCoordinates=null) => {
 
-    const drawWidth = 12;
-    const drawHeight = 12;
-    ctx.fillStyle = "red";
-    ctx.strokeStyle = "red";
-    ctx.beginPath();
-    ctx.roundRect(mouseCoordinates.x-drawWidth*.5,mouseCoordinates.y-drawHeight*.5, drawWidth, drawHeight, [drawWidth]);
-    ctx.fill();
-    ctx.closePath();
-    ctx.stroke();
+
+    const circleRadius = .25;
+    const lineWidth = 1;
+    ctx.fillStyle = drawColor;
+    ctx.strokeStyle = drawColor;
+
+
+
+    if (prevCoordinates) {
+
+        ctx.moveTo(prevCoordinates.x, prevCoordinates.y);
+        ctx.lineTo(mouseCoordinates.x, mouseCoordinates.y);
+        ctx.lineWidth = lineWidth;
+        ctx.shadowBlur = 2;
+        ctx.shadowColor = drawColor;
+        ctx.lineJoin = "miter";
+        ctx.lineCap = "round"
+        ctx.stroke();
+        ctx.closePath();
+    }
+    else {
+        ctx.beginPath();
+        ctx.arc(mouseCoordinates.x, mouseCoordinates.y, circleRadius, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
+    }
+
 }
 
-const showAboutThisSite = () => {
-    aboutVisible = true;
-    aboutThisSite.style.visibility = 'visible';
-}
-
-const hideAboutThisSite = () => {
-    aboutVisible = false;
-    aboutThisSite.style.visibility = 'hidden';
-}
 

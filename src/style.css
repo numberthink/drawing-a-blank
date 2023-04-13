@@ -58,6 +58,21 @@ canvas {
   color: black;
   max-width: 4rem;
   max-height: 2.5rem;
+  border-color: #626262;
+  border-width: 1px;
+}
+
+#closeAboutButton {
+  position: absolute;
+  right: .25rem;
+  top: .25rem;
+  font-size: .75rem;
+  background-color:rgb(234, 233, 233);
+  color: red;
+  border-color: black;
+  border-width: 1px;
+  max-width: 3rem;
+  max-height: 2.5rem;
 }
 
 #aboutThisSite {
@@ -82,5 +97,14 @@ canvas {
 }
 
 #colorPickerLabel {
+  margin-left: .5rem;
+}
+
+#markerColorPickerContainer {
+  margin-top: .75rem;
+  font-weight: 500;
+}
+
+#markerColorPickerLabel {
   margin-left: .5rem;
 }
