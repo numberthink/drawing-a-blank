@@ -16,6 +16,29 @@ Live site is located [here](https://drawing-a-blank.numberthink.com).
 
 Happy drawing!
 
+## Pure blank
+
+If you're just looking for a pure blank canvas, no bells or whistles attached, then checkout this [branch](https://github.com/numberthink/drawing-a-blank/tree/pureblank)
+
+## Running the site locally
+
+To run this locally on your own computer, follow these simple commands. 
+
+Clone this repo:
+```bash
+npx degit https://github.com/numberthink/drawing-a-blank.git
+```
+
+Install dependencies:
+```bash
+npm install
+```
+
+Run locally:
+```bash
+npm run dev
+```
+
 
 
 
