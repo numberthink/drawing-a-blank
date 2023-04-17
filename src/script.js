@@ -90,10 +90,6 @@ markerColorPicker.oninput = function() {
 }
 
 const onMouseDown = (event) => {
-    if (aboutThisSite.contains(event.target) || showAboutButton.contains(event.target)) {
-        return;
-    }
-    event.preventDefault();
     clicking = true;
     const bb = blankCanvas.getBoundingClientRect();
     const x = Math.floor( (event.clientX - bb.left) / bb.width * blankCanvas.width );
@@ -104,11 +100,20 @@ const onMouseDown = (event) => {
 }
 
 document.body.addEventListener('mousedown',(event)=> {
+    if (aboutThisSite.contains(event.target) || showAboutButton.contains(event.target)) {
+        return;
+    }
     onMouseDown(event);
 });
 
 document.body.addEventListener('touchstart',(event) => {
-    onMouseDown(event);
+    const touch = event.changedTouches[0];
+    if (aboutThisSite.contains(touch.target) || showAboutButton.contains(touch.target)) {
+        return;
+    }
+    event.preventDefault();
+    
+    onMouseDown(touch);
 } );
 
 const onMouseUp = (event) => {
@@ -124,7 +129,7 @@ document.body.addEventListener('touchend',(event)=> {
 });
 
 const onMouseMove = (event) => {
-    event.preventDefault();
+    
     if (clicking) {
         const prevCoordinates = structuredClone(mouseCoordinates);
         const bb = blankCanvas.getBoundingClientRect();
@@ -142,7 +147,9 @@ document.body.addEventListener('mousemove',(event)=> {
 });
 
 document.body.addEventListener('touchmove',(event)=> {
-    onMouseMove(event);
+    event.preventDefault();
+    const touch = event.changedTouches[0];
+    onMouseMove(touch);
 })
 
 const drawAtMouse = (prevCoordinates=null) => {
