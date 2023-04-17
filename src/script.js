@@ -93,6 +93,7 @@ const onMouseDown = (event) => {
     if (aboutThisSite.contains(event.target) || showAboutButton.contains(event.target)) {
         return;
     }
+    event.preventDefault();
     clicking = true;
     const bb = blankCanvas.getBoundingClientRect();
     const x = Math.floor( (event.clientX - bb.left) / bb.width * blankCanvas.width );
@@ -123,6 +124,7 @@ document.body.addEventListener('touchend',(event)=> {
 });
 
 const onMouseMove = (event) => {
+    event.preventDefault();
     if (clicking) {
         const prevCoordinates = structuredClone(mouseCoordinates);
         const bb = blankCanvas.getBoundingClientRect();
