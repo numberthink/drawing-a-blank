@@ -89,7 +89,7 @@ markerColorPicker.oninput = function() {
     drawColor = markerColorPicker.value;
 }
 
-document.body.addEventListener('mousedown',(event)=> {
+const onMouseDown = (event) => {
     if (aboutThisSite.contains(event.target) || showAboutButton.contains(event.target)) {
         return;
     }
@@ -100,13 +100,29 @@ document.body.addEventListener('mousedown',(event)=> {
     mouseCoordinates.x = x;
     mouseCoordinates.y = y;
     drawAtMouse();
+}
+
+document.body.addEventListener('mousedown',(event)=> {
+    onMouseDown(event);
 });
 
-document.body.addEventListener('mouseup',()=> {
-    clicking = false;
-})
+document.body.addEventListener('touchstart',(event) => {
+    onMouseDown(event);
+} );
 
-document.body.addEventListener('mousemove',(event)=> {
+const onMouseUp = (event) => {
+    clicking = false;
+}
+
+document.body.addEventListener('mouseup',()=> {
+    onMouseUp();
+});
+
+document.body.addEventListener('touchend',(event)=> {
+    onMouseUp();
+});
+
+const onMouseMove = (event) => {
     if (clicking) {
         const prevCoordinates = structuredClone(mouseCoordinates);
         const bb = blankCanvas.getBoundingClientRect();
@@ -117,7 +133,15 @@ document.body.addEventListener('mousemove',(event)=> {
 
         drawAtMouse(prevCoordinates);
     }
+}
+
+document.body.addEventListener('mousemove',(event)=> {
+    onMouseMove(event);
 });
+
+document.body.addEventListener('touchmove',(event)=> {
+    onMouseMove(event);
+})
 
 const drawAtMouse = (prevCoordinates=null) => {
 
