@@ -78,6 +78,7 @@ clearCanvasButton.addEventListener('click',(event) => {
 backgroundColorPicker.oninput = function() {
     canvasColor = backgroundColorPicker.value;
     drawBlank();
+    document.body.style.backgroundColor = backgroundColorPicker.value;
 }
 
 
